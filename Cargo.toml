@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "cli-ide-base",
+    "cli-ide-platform",
+    "cli-ide-workbench",
+    "cli-ide-demo"
+]
+
+resolver = "2"

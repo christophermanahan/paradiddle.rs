@@ -1,0 +1,9 @@
+[package]
+name = "cli-ide-demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.27"
+ratatui = { version = "0.28", default-features = false, features = ["crossterm"] }
+cli-ide-workbench = { path = "../cli-ide-workbench" }

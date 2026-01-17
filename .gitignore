@@ -1,0 +1,19 @@
+# Compiled output
+target/
+
+# Reference implementations (git-ignored per CLAUDE.md workflow)
+_refs/
+
+# Backup files
+**/*.rs.bk
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

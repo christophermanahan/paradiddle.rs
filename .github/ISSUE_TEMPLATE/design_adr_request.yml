@@ -1,0 +1,97 @@
+name: Design / ADR Request
+description: Request discussion on a design decision or propose an ADR
+title: "[Design]: "
+labels: ["design", "adr", "discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose architectural decisions or request design discussions.
+        See `docs/DECISION_POLICY.md` for when ADRs are required.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What situation or problem requires a design decision?
+      placeholder: |
+        We need to decide how to...
+        The current approach has limitations...
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: Options Under Consideration
+      description: What approaches are you considering?
+      placeholder: |
+        Option 1: ...
+        Option 2: ...
+        Option 3: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints & Requirements
+      description: What constraints must the solution satisfy?
+      placeholder: |
+        - Must be async-compatible
+        - Must work on Windows
+        - Performance requirement: ...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Decision Category
+      description: What type of decision is this?
+      options:
+        - Dependency selection
+        - Crate / module boundaries
+        - Async runtime
+        - Storage / persistence
+        - IPC / communication
+        - Security
+        - Performance
+        - API design
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact Assessment
+      description: What will be affected by this decision?
+      placeholder: |
+        Crates affected: ...
+        Reversibility: ...
+        Migration needed: ...
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Initial Proposal (if any)
+      description: If you have a preferred option, describe it.
+      placeholder: I propose we use Option X because...
+
+  - type: checkboxes
+    id: adr-needed
+    attributes:
+      label: ADR Assessment
+      description: Based on `docs/DECISION_POLICY.md`, does this need an ADR?
+      options:
+        - label: This decision likely requires an ADR
+        - label: This is a minor decision that may not need an ADR
+        - label: Unsure - requesting guidance
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to relevant documentation, prior art, or discussions.
+      placeholder: |
+        - https://...
+        - Related issue: #...

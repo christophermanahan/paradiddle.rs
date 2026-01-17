@@ -57,3 +57,26 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
   - `cargo test -p cli-ide-base` - ✅ 14 tests passing
   - `cargo clippy -D warnings` - ✅ No warnings
 - **Lesson Learned:** Crossbeam's MPMC channels share messages among receivers (work-stealing), not broadcast. True pub-sub requires per-subscriber channels.
+
+## Entry 4
+
+- **Date:** 2026-01-17
+- **Task:** PR #2 - Governance, review process, and CI/CD pipeline
+- **Notes:** Established project governance and development infrastructure:
+  1. **Governance docs** - Human-in-the-loop policy, merge gates, ADR requirements (`docs/GOVERNANCE.md`).
+  2. **Review process** - Roles, checklists, Codex integration, resolution tables (`docs/REVIEW_PROCESS.md`).
+  3. **Decision policy** - When ADRs are required (`docs/DECISION_POLICY.md`).
+  4. **Response playbook** - Step-by-step guide for responding to PR reviews (`docs/review/RESPONSE_PLAYBOOK.md`).
+  5. **ADR system** - Template at `docs/adr/0000-template.md`.
+  6. **GitHub templates** - PR template, bug/feature/design issue templates.
+  7. **Developer experience** - `docs/DEV.md` guide, `CHANGELOG.md`, `justfile` for common commands.
+  8. **CI/CD workflows**:
+     - `ci.yml`: Format, clippy, test, build jobs
+     - `security.yml`: Gitleaks, cargo-audit, cargo-deny
+     - `coverage.yml`: cargo-llvm-cov with artifact upload
+     - `perf.yml`: Benchmark infrastructure (weekly + manual)
+  9. **deny.toml** - Dependency license and security policy.
+  10. **PR #3 plan** - Documented UI/E2E testing strategy for next PR.
+- **Files Created:** 19 new files across docs/, .github/, and root.
+- **Rationale:** Establishing governance and CI early ensures quality and consistency as the project grows. The human-in-the-loop policy is critical for AI-assisted development.
+- **Next Steps:** Enable branch protection on main after PR #2 merges. Begin PR #3 for snapshot testing.

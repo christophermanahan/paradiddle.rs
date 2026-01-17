@@ -42,3 +42,18 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
   - `cargo clippy -D warnings` - ✅ No warnings
   - `cargo fmt --check` - ✅ Formatted
 - **Next Steps:** Create GitHub repository, push PR #1, then plan PR #2 for CI/CD pipeline.
+
+## Entry 3
+
+- **Date:** 2026-01-17
+- **Task:** Fix Event<T> broadcast semantics (Codex review feedback)
+- **Notes:** The original implementation used `receiver.clone()` which in crossbeam channels results in load-balancing (only ONE receiver gets each message). Fixed to implement true publish-subscribe broadcast semantics:
+  1. **New architecture** - Store subscribers as `Arc<Mutex<Vec<Sender<T>>>>` instead of a shared receiver.
+  2. **subscribe()** - Now creates a fresh channel per subscriber and registers its sender.
+  3. **emit()** - Fan-outs value to ALL subscribers; automatically removes disconnected senders.
+  4. **map/filter/debounce** - Updated to use `upstream.subscribe()` and emit to downstream Event.
+  5. **Tests** - Added 6 new tests proving broadcast semantics, dropped subscriber handling, and transformed event broadcasting.
+- **Verification:**
+  - `cargo test -p cli-ide-base` - ✅ 14 tests passing
+  - `cargo clippy -D warnings` - ✅ No warnings
+- **Lesson Learned:** Crossbeam's MPMC channels share messages among receivers (work-stealing), not broadcast. True pub-sub requires per-subscriber channels.

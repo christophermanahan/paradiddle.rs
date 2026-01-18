@@ -8,7 +8,10 @@ all-features = true
 [advisories]
 db-path = "~/.cargo/advisory-db"
 db-urls = ["https://github.com/rustsec/advisory-db"]
-ignore = []
+ignore = [
+    # paste is unmaintained but still works; transitive dep from ratatui
+    "RUSTSEC-2024-0436",
+]
 
 [licenses]
 allow = [

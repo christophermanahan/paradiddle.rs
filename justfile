@@ -72,7 +72,11 @@ watch:
 # Create a new ADR
 adr name:
     @echo "Creating ADR: {{name}}"
-    @NEXT_NUM=$(ls docs/adr/*.md 2>/dev/null | grep -v template | wc -l | tr -d ' '); \
-    PADDED=$(printf "%04d" $$NEXT_NUM); \
+    @MAX_NUM=$(ls docs/adr/*.md 2>/dev/null | grep -v template | sed -n 's/.*\/\([0-9]\{4\}\)-.*/\1/p' | sort -n | tail -1); \
+    NEXT_NUM=$$((10#$${MAX_NUM:-0} + 1)); \
+    PADDED=$$(printf "%04d" $$NEXT_NUM); \
+    if [ -f "docs/adr/$${PADDED}-{{name}}.md" ]; then \
+        echo "Error: docs/adr/$${PADDED}-{{name}}.md already exists"; exit 1; \
+    fi; \
     cp docs/adr/0000-template.md "docs/adr/$${PADDED}-{{name}}.md"; \
     echo "Created: docs/adr/$${PADDED}-{{name}}.md"

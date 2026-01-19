@@ -80,3 +80,31 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
 - **Files Created:** 19 new files across docs/, .github/, and root.
 - **Rationale:** Establishing governance and CI early ensures quality and consistency as the project grows. The human-in-the-loop policy is critical for AI-assisted development.
 - **Next Steps:** Enable branch protection on main after PR #2 merges. Begin PR #3 for snapshot testing.
+
+## Entry 5
+
+- **Date:** 2026-01-19
+- **Task:** PR #3 - UI snapshot tests and performance baselines
+- **Notes:** Implemented non-TTY testing infrastructure and performance benchmarks:
+  1. **UI Snapshot Test Harness** - Created `snapshot_tests.rs` in cli-ide-workbench that renders windows to an offscreen buffer using ratatui's `TestBackend`. No TTY required, fully deterministic.
+  2. **EditorWindow Tests** - Verify title "Editor", borders (box-drawing chars), and "Welcome to Paradiddle.rs!" content.
+  3. **TerminalWindow Tests** - Verify title "Terminal", borders, and placeholder text.
+  4. **Split Layout Tests** - Verify both panes render, titles appear, and panes don't overlap (using Rect assertions).
+  5. **Edge Case Tests** - Minimum size rendering (10x5), various terminal sizes (60x20, 80x24, 100x30).
+  6. **Event System Benchmarks** - Criterion benches in `cli-ide-base/benches/event_bench.rs`:
+     - `event_emit` with 1, 4, 16, 64 subscribers
+     - `event_subscribe`, `event_new`, `event_emit_recv_roundtrip`, `event_map_transform`
+  7. **Render Benchmarks** - Criterion benches in `cli-ide-workbench/benches/render_bench.rs`:
+     - `render_editor`, `render_terminal`, `render_split_layout` at 80x24, 120x40, 200x60
+     - `terminal_creation` overhead
+  8. **Documentation** - Updated DEV.md with instructions for running snapshot tests and benchmarks.
+- **Design Decisions:**
+  - Used plain string assertions instead of `insta` to keep dependencies minimal and avoid snapshot update workflow complexity.
+  - Tests assert key substrings and structural markers rather than exact pixel-perfect output for robustness.
+  - Benchmarks are NOT run automatically in CI to avoid noise; existing `perf.yml` workflow handles scheduled/manual runs.
+- **Verification:**
+  - `cargo test --all --all-features` - All tests pass
+  - `cargo clippy --all-targets --all-features -- -D warnings` - No warnings
+  - `cargo fmt --all -- --check` - Formatted
+  - `cargo bench --no-run` - Benchmarks compile
+- **Next Steps:** Create PR, respond to any Codex review feedback.

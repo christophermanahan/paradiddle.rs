@@ -174,6 +174,58 @@ paradiddle.rs/
 - Tests should be deterministic (no flakes)
 - Use short timeouts for async/timing tests
 
+### UI Snapshot Tests
+
+The workbench crate includes snapshot tests that render windows to an offscreen buffer
+using ratatui's `TestBackend`. These tests require no TTY and are fully CI-compatible.
+
+```bash
+# Run all snapshot tests
+cargo test -p cli-ide-workbench snapshot
+
+# Run with verbose output to see rendered buffers on failure
+cargo test -p cli-ide-workbench snapshot -- --nocapture
+```
+
+Snapshot tests verify:
+- Window titles and borders render correctly
+- Content appears within the bordered area
+- Split layouts show both panes without overlap
+- Windows render correctly at various sizes
+
+### Performance Benchmarks
+
+Criterion benchmarks measure rendering and event system performance. Benchmarks are
+**not** run automatically in CI on every PR to avoid noise.
+
+```bash
+# Run all benchmarks
+cargo bench
+
+# Run benchmarks for a specific crate
+cargo bench -p cli-ide-base      # Event system benchmarks
+cargo bench -p cli-ide-workbench # Render benchmarks
+
+# Run a specific benchmark
+cargo bench -p cli-ide-base -- event_emit
+```
+
+**Available benchmarks:**
+
+| Crate | Benchmark | Description |
+|-------|-----------|-------------|
+| cli-ide-base | `event_emit` | Emit to N subscribers (1, 4, 16, 64) |
+| cli-ide-base | `event_subscribe` | Subscribe operation overhead |
+| cli-ide-base | `event_new` | Event creation |
+| cli-ide-base | `event_emit_recv_roundtrip` | Full emit→receive latency |
+| cli-ide-base | `event_map_transform` | Map transformation setup |
+| cli-ide-workbench | `render_editor` | EditorWindow at various sizes |
+| cli-ide-workbench | `render_terminal` | TerminalWindow at various sizes |
+| cli-ide-workbench | `render_split_layout` | Split layout with both windows |
+| cli-ide-workbench | `terminal_creation` | TestBackend terminal creation |
+
+Benchmark results are stored in `target/criterion/` and include HTML reports.
+
 ## Common Issues
 
 ### "Device not configured" when running demo

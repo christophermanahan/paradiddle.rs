@@ -19,5 +19,8 @@ pub trait Window {
 mod editor_window;
 mod terminal_window;
 
+#[cfg(test)]
+mod snapshot_tests;
+
 pub use editor_window::EditorWindow;
 pub use terminal_window::TerminalWindow;

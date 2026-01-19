@@ -6,10 +6,15 @@
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::Frame;
 
+use crate::focus::FocusManager;
 use crate::input::{AppEvent, AppKey};
-use crate::window::{EditorWindow, TerminalWindow, Window};
+use crate::keybinding::{Action, KeybindingRouter};
+use crate::window::{EditorWindow, TerminalWindow, Window, WindowId};
 
 /// Which pane currently has focus.
+///
+/// This enum is kept for backward compatibility with existing tests.
+/// Internally, the App now uses FocusManager with WindowIds.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum FocusedPane {
     #[default]
@@ -36,8 +41,14 @@ pub struct App {
     editor: EditorWindow,
     /// The terminal window (right pane)
     terminal: TerminalWindow,
-    /// Which pane has focus
-    focused: FocusedPane,
+    /// Editor window ID
+    editor_id: WindowId,
+    /// Terminal window ID
+    terminal_id: WindowId,
+    /// Focus manager
+    focus_manager: FocusManager,
+    /// Keybinding router
+    keybinding_router: KeybindingRouter,
     /// Whether the app is still running
     running: bool,
     /// Current terminal width
@@ -55,10 +66,19 @@ impl Default for App {
 impl App {
     /// Create a new App with default windows.
     pub fn new() -> Self {
+        let editor_id = WindowId::new();
+        let terminal_id = WindowId::new();
+
+        // Start with editor focused
+        let focus_manager = FocusManager::with_focus(editor_id);
+
         Self {
             editor: EditorWindow::default(),
             terminal: TerminalWindow::default(),
-            focused: FocusedPane::default(),
+            editor_id,
+            terminal_id,
+            focus_manager,
+            keybinding_router: KeybindingRouter::new(),
             running: true,
             width: 80,
             height: 24,
@@ -67,14 +87,10 @@ impl App {
 
     /// Create a new App with specified initial size.
     pub fn with_size(width: u16, height: u16) -> Self {
-        Self {
-            editor: EditorWindow::default(),
-            terminal: TerminalWindow::default(),
-            focused: FocusedPane::default(),
-            running: true,
-            width,
-            height,
-        }
+        let mut app = Self::new();
+        app.width = width;
+        app.height = height;
+        app
     }
 
     /// Check if the app is still running.
@@ -83,8 +99,44 @@ impl App {
     }
 
     /// Get the current focused pane.
+    ///
+    /// Returns the FocusedPane enum for backward compatibility.
     pub fn focused(&self) -> FocusedPane {
-        self.focused
+        match self.focus_manager.focused() {
+            Some(id) if id == self.editor_id => FocusedPane::Editor,
+            Some(id) if id == self.terminal_id => FocusedPane::Terminal,
+            _ => FocusedPane::Editor, // Default to editor if unknown
+        }
+    }
+
+    /// Get the focused window ID.
+    pub fn focused_id(&self) -> Option<WindowId> {
+        self.focus_manager.focused()
+    }
+
+    /// Get the editor window ID.
+    pub fn editor_id(&self) -> WindowId {
+        self.editor_id
+    }
+
+    /// Get the terminal window ID.
+    pub fn terminal_id(&self) -> WindowId {
+        self.terminal_id
+    }
+
+    /// Get a reference to the focus manager.
+    pub fn focus_manager(&self) -> &FocusManager {
+        &self.focus_manager
+    }
+
+    /// Get a reference to the keybinding router.
+    pub fn keybinding_router(&self) -> &KeybindingRouter {
+        &self.keybinding_router
+    }
+
+    /// Get a mutable reference to the keybinding router.
+    pub fn keybinding_router_mut(&mut self) -> &mut KeybindingRouter {
+        &mut self.keybinding_router
     }
 
     /// Get the current terminal dimensions.
@@ -109,49 +161,63 @@ impl App {
         }
     }
 
-    /// Handle a key press.
+    /// Handle a key press using the keybinding router.
     fn handle_key(&mut self, key: AppKey) {
-        match key {
-            AppKey::Q | AppKey::Esc => {
+        if let Some(action) = self.keybinding_router.dispatch(key) {
+            self.execute_action(action);
+        }
+        // Keys not bound to actions are ignored (could be forwarded to focused window)
+    }
+
+    /// Execute an action.
+    fn execute_action(&mut self, action: Action) {
+        match action {
+            Action::Quit => {
                 self.running = false;
             }
-            AppKey::Tab => {
-                self.focused = self.focused.toggle();
+            Action::ToggleFocus => {
+                self.toggle_focus();
             }
-            _ => {
-                // Other keys not handled yet
+            Action::FocusNext => {
+                self.toggle_focus(); // With only 2 windows, next == toggle
+            }
+            Action::FocusPrev => {
+                self.toggle_focus(); // With only 2 windows, prev == toggle
+            }
+            Action::None => {
+                // Do nothing
             }
         }
+    }
+
+    /// Toggle focus between editor and terminal.
+    fn toggle_focus(&mut self) {
+        let current = self.focus_manager.focused();
+        let next = match current {
+            Some(id) if id == self.editor_id => self.terminal_id,
+            _ => self.editor_id,
+        };
+        self.focus_manager.set_focus(next);
     }
 
     /// Render the application to a frame.
     ///
     /// Uses the stored dimensions to create a layout and renders both windows.
-    /// The focused window gets a visual indicator in its title.
+    /// The focused window gets a visual indicator.
     pub fn render(&mut self, frame: &mut Frame, area: Rect) {
         let chunks = Layout::default()
             .direction(Direction::Horizontal)
             .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
             .split(area);
 
-        // Render with focus indicator
-        self.render_editor(frame, chunks[0]);
-        self.render_terminal(frame, chunks[1]);
-    }
+        // Render with focus indicators
+        let editor_focused = self.focus_manager.is_focused(self.editor_id);
+        let terminal_focused = self.focus_manager.is_focused(self.terminal_id);
 
-    /// Render the editor window with optional focus indicator.
-    fn render_editor(&mut self, frame: &mut Frame, area: Rect) {
-        // For now, render normally - focus indicator can be added to Window trait later
-        // This keeps the change minimal
-        self.editor.render(frame, area);
-
-        // If focused, we could overlay a marker, but that requires Window trait changes
-        // Deferring visual focus indicator to keep scope minimal
-    }
-
-    /// Render the terminal window with optional focus indicator.
-    fn render_terminal(&mut self, frame: &mut Frame, area: Rect) {
-        self.terminal.render(frame, area);
+        self.editor
+            .render_with_focus(frame, chunks[0], editor_focused);
+        self.terminal
+            .render_with_focus(frame, chunks[1], terminal_focused);
     }
 
     /// Get the layout rects for the current size.
@@ -244,5 +310,44 @@ mod tests {
         assert_eq!(app.is_running(), running_before);
         assert_eq!(app.focused(), focused_before);
         assert_eq!(app.size(), size_before);
+    }
+
+    #[test]
+    fn test_window_ids_are_unique() {
+        let app = App::new();
+        assert_ne!(app.editor_id(), app.terminal_id());
+    }
+
+    #[test]
+    fn test_focused_id_tracks_editor() {
+        let app = App::new();
+        assert_eq!(app.focused_id(), Some(app.editor_id()));
+    }
+
+    #[test]
+    fn test_focused_id_tracks_terminal() {
+        let mut app = App::new();
+        app.handle_event(AppEvent::Key(AppKey::Tab));
+        assert_eq!(app.focused_id(), Some(app.terminal_id()));
+    }
+
+    #[test]
+    fn test_focus_manager_accessible() {
+        let app = App::new();
+        assert!(app.focus_manager().is_focused(app.editor_id()));
+    }
+
+    #[test]
+    fn test_keybinding_router_accessible() {
+        let app = App::new();
+        assert!(app.keybinding_router().is_globally_bound(AppKey::Q));
+    }
+
+    #[test]
+    fn test_keybinding_router_mutable() {
+        let mut app = App::new();
+        app.keybinding_router_mut()
+            .register_global(AppKey::Char('x'), Action::Quit);
+        assert!(app.keybinding_router().is_globally_bound(AppKey::Char('x')));
     }
 }

@@ -145,3 +145,44 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
   - `cargo fmt --all -- --check` - Formatted
   - `cargo bench --no-run` - Benchmarks compile
 - **Next Steps:** Create PR #4, respond to review feedback. Plan PR #5 for keybinding router.
+
+## Entry 7
+
+- **Date:** 2026-01-19
+- **Task:** PR #5 - Focus management, keybinding router, and window registry infrastructure
+- **Notes:** Implemented the foundation for multi-window management:
+  1. **WindowId type** (`cli-ide-workbench/src/window/window_id.rs`) - Unique identifier using atomic counter. Implements `Hash`, `Eq`, `Copy`, `Clone` for use as collection keys.
+  2. **FocusManager** (`cli-ide-workbench/src/focus.rs`) - Tracks focused window by ID. Emits `FocusChanged` events via `Event<T>` when focus changes. Methods: `focused()`, `set_focus()`, `clear_focus()`, `is_focused()`.
+  3. **KeybindingRouter** (`cli-ide-workbench/src/keybinding.rs`) - Maps keys to actions. Default bindings: Q/Esc→Quit, Tab→ToggleFocus. Supports `register_global()`, `unregister_global()`, `dispatch()`.
+  4. **Window trait update** - Added `render_with_focus(frame, area, focused)` method with default impl that ignores focus.
+  5. **Focus indicators** - EditorWindow and TerminalWindow now:
+     - Show `[*]` suffix in title when focused
+     - Use `BorderType::Thick` when focused, `BorderType::Plain` when unfocused
+  6. **App integration** - App now uses:
+     - `WindowId` for editor and terminal
+     - `FocusManager` instead of simple enum
+     - `KeybindingRouter` for key dispatch
+     - Backward-compatible `focused()` method returning `FocusedPane`
+  7. **Integration tests** - Added 6 new tests:
+     - `app_focused_editor_shows_indicator`, `app_focused_terminal_shows_indicator`
+     - `app_focus_toggle_changes_indicators`
+     - `app_window_ids_are_unique`, `app_focused_id_matches_focused_pane`
+     - `app_custom_keybinding_works`
+  8. **cli-ide-base dependency** - Added to cli-ide-workbench for Event<T> access.
+- **Design Decisions:**
+  - Kept `FocusedPane` enum for backward compatibility with existing tests.
+  - Used atomic counter for WindowId generation (thread-safe, no allocation).
+  - FocusManager emits events only when focus actually changes (idempotent set).
+  - Router defaults provide sensible out-of-box behavior; custom bindings additive.
+  - Focus indicators use both border style AND title suffix for accessibility.
+- **Explicitly Out of Scope:**
+  - WindowRegistry (deferred - not needed with only 2 fixed windows)
+  - Modal keybindings (future PR)
+  - Configurable keybindings from file (future PR)
+  - Mouse focus
+  - Floating window geometry
+- **Verification:**
+  - `cargo test --all --all-features` - 88 tests passing
+  - `cargo clippy --all-targets --all-features -- -D warnings` - No warnings
+  - `cargo fmt --all -- --check` - Formatted
+- **Next Steps:** Create PR #5, wait for review feedback.

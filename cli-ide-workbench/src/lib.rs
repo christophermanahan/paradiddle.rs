@@ -4,5 +4,7 @@
 //! rendering pipeline.
 
 pub mod app;
+pub mod focus;
 pub mod input;
+pub mod keybinding;
 pub mod window;

@@ -152,6 +152,7 @@ version = "0.1.0"
 name = "cli-ide-workbench"
 version = "0.1.0"
 dependencies = [
+ "cli-ide-base",
  "criterion",
  "ratatui",
 ]

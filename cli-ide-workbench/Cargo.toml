@@ -5,6 +5,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+cli-ide-base = { path = "../cli-ide-base" }
 ratatui = { version = "0.28", default-features = false, features = ["crossterm"] }
 
 [dev-dependencies]

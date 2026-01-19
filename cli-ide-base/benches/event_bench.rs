@@ -19,10 +19,14 @@ fn bench_event_emit_to_subscribers(c: &mut Criterion) {
                 let event: Event<i32> = Event::new();
 
                 // Create subscribers
-                let _receivers: Vec<_> = (0..count).map(|_| event.subscribe()).collect();
+                let receivers: Vec<_> = (0..count).map(|_| event.subscribe()).collect();
 
                 b.iter(|| {
                     event.emit(black_box(42));
+                    // Drain receivers to prevent unbounded queue growth
+                    for receiver in &receivers {
+                        while receiver.try_recv().is_ok() {}
+                    }
                 });
             },
         );

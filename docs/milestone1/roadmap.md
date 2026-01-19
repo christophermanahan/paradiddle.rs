@@ -79,6 +79,7 @@ See `docs/milestone1/pr5-plan.md` for full planning document.
 6. ~~**App integration**~~ ✅ – Uses FocusManager, KeybindingRouter, WindowIds.
 7. ~~**Integration tests**~~ ✅ – Focus indicator and keybinding tests.
 8. ~~**Documentation**~~ ✅ – DEV.md, roadmap, journal updated.
+9. ~~**Keybinding contract + enforcement**~~ ✅ – Canonical binding docs, review rubric, CI workflow.
 
 ## Future Work
 
@@ -108,7 +109,7 @@ See `docs/milestone1/pr5-plan.md` for full planning document.
 | PR #2    | 11/11     | 0         |
 | PR #3    | 8/8       | 0         |
 | PR #4    | 9/9       | 0         |
-| PR #5    | 8/8       | 0         |
+| PR #5    | 9/9       | 0         |
 
 ---
 

@@ -186,3 +186,39 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
   - `cargo clippy --all-targets --all-features -- -D warnings` - No warnings
   - `cargo fmt --all -- --check` - Formatted
 - **Next Steps:** Create PR #5, wait for review feedback.
+
+## Entry 8
+
+- **Date:** 2026-01-19
+- **Task:** PR #5 Amendment - Keybinding contract and CI enforcement
+- **Notes:** Added documentation and enforcement to prevent undocumented keybindings:
+  1. **Keybinding reference** (`docs/input/keybindings.md`) - Canonical source of truth for all keybindings:
+     - Current bindings table: q, Esc → Quit; Tab → ToggleFocus
+     - Reserved bindings table: Shift+Tab, Ctrl+C, hjkl, Ctrl+W, etc.
+     - Rules: no undocumented bindings, review gate, CI enforcement
+     - Implementation file references
+  2. **Review rubric** (`docs/review/REVIEW_RUBRIC.md`) - Priority levels and mandatory rules:
+     - P0 rule: keybinding changes MUST update docs/input/keybindings.md
+     - Documentation sync requirements table
+     - Review workflow diagram
+  3. **AI review schema** (`docs/review/AI_REVIEW_SCHEMA.md`) - Rules for Codex/AI reviewers:
+     - Same P0 keybinding rule
+     - Files to check for keybinding changes
+     - Example review output with keybinding violation
+  4. **CI workflow** (`.github/workflows/enforce-keybinding-doc.yml`) - Automated enforcement:
+     - Triggers on changes to keybinding-related files
+     - Fails if keybinding code changes but docs/input/keybindings.md doesn't
+     - Validates required sections exist in keybindings.md
+     - Job name: "Keybinding Doc Sync Check" (can be made required)
+- **Why this matters:**
+  - Prevents keybinding drift between code and docs
+  - Makes keybindings discoverable for users
+  - Ensures review process catches undocumented bindings
+  - Provides foundation for future keybinding configuration
+- **No runtime behavior changed** - This is purely documentation and CI enforcement.
+- **Files Created:**
+  - `docs/input/keybindings.md`
+  - `docs/review/REVIEW_RUBRIC.md`
+  - `docs/review/AI_REVIEW_SCHEMA.md`
+  - `.github/workflows/enforce-keybinding-doc.yml`
+- **Next Steps:** Push amendment to PR #5, wait for CI and review.

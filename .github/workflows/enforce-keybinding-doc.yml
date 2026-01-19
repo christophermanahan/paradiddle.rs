@@ -1,0 +1,86 @@
+name: Keybinding Documentation Sync
+
+on:
+  pull_request:
+    paths:
+      # Keybinding-related source files
+      - 'cli-ide-workbench/src/input.rs'
+      - 'cli-ide-workbench/src/keybinding.rs'
+      - 'cli-ide-workbench/src/app.rs'
+      - 'cli-ide-workbench/src/focus.rs'
+      - 'cli-ide-demo/src/main.rs'
+      # Also trigger if the doc itself changes (to validate format)
+      - 'docs/input/keybindings.md'
+
+jobs:
+  keybinding-doc-sync:
+    name: Keybinding Doc Sync Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            cli-ide-workbench/src/input.rs
+            cli-ide-workbench/src/keybinding.rs
+            cli-ide-workbench/src/app.rs
+            cli-ide-workbench/src/focus.rs
+            cli-ide-demo/src/main.rs
+
+      - name: Check if keybinding doc was updated
+        id: doc-changed
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            docs/input/keybindings.md
+
+      - name: Enforce keybinding documentation sync
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Keybinding-related files changed:"
+          echo "${{ steps.changed-files.outputs.all_changed_files }}"
+          echo ""
+
+          if [ "${{ steps.doc-changed.outputs.any_changed }}" != "true" ]; then
+            echo "::error::Keybinding-related code changed but docs/input/keybindings.md was not updated."
+            echo ""
+            echo "Per project policy, any PR that modifies keybinding behavior must update"
+            echo "the canonical keybinding documentation at docs/input/keybindings.md"
+            echo ""
+            echo "Please update the documentation to reflect your changes."
+            echo "See docs/review/REVIEW_RUBRIC.md for details."
+            exit 1
+          else
+            echo "Keybinding documentation was updated. Check passed."
+          fi
+
+      - name: Validate keybindings.md exists
+        run: |
+          if [ ! -f "docs/input/keybindings.md" ]; then
+            echo "::error::docs/input/keybindings.md does not exist"
+            exit 1
+          fi
+          echo "docs/input/keybindings.md exists"
+
+      - name: Check keybindings.md has required sections
+        run: |
+          FILE="docs/input/keybindings.md"
+
+          # Check for required sections
+          if ! grep -q "## Current Bindings" "$FILE"; then
+            echo "::error::docs/input/keybindings.md missing '## Current Bindings' section"
+            exit 1
+          fi
+
+          if ! grep -q "## Reserved Bindings" "$FILE"; then
+            echo "::error::docs/input/keybindings.md missing '## Reserved Bindings' section"
+            exit 1
+          fi
+
+          echo "Required sections present in keybindings.md"

@@ -42,14 +42,18 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 10. ~~**Coverage workflow**~~ ✅ – cargo-llvm-cov integration.
 11. ~~**Performance workflow**~~ ✅ – Benchmark infrastructure.
 
+## PR #3: UI Snapshot Tests & Performance Baselines (In Progress)
+
+1. ~~**UI snapshot test harness**~~ ✅ – Render windows to offscreen buffer using TestBackend.
+2. ~~**EditorWindow snapshot tests**~~ ✅ – Verify title, borders, and content.
+3. ~~**TerminalWindow snapshot tests**~~ ✅ – Verify title, borders, and placeholder text.
+4. ~~**Split layout tests**~~ ✅ – Verify both panes render without overlap.
+5. ~~**Edge case tests**~~ ✅ – Minimum size rendering, various terminal sizes.
+6. ~~**Event system benchmarks**~~ ✅ – Criterion benches for emit/subscribe/map.
+7. ~~**Render benchmarks**~~ ✅ – Criterion benches for window rendering at various sizes.
+8. ~~**Documentation**~~ ✅ – DEV.md updated with test and bench instructions.
+
 ## Future Work
-
-### PR #3: UI/E2E Testing (Planned)
-
-See `docs/milestone1/pr3-ui-e2e-plan.md` for details:
-- Snapshot-based TUI testing with `insta`
-- Performance benchmarks with `criterion`
-- PTY-based integration test scaffolding
 
 ### Deferred Items (From Reviews)
 
@@ -66,6 +70,7 @@ See `docs/milestone1/pr3-ui-e2e-plan.md` for details:
 | P1 Tasks | 4/4       | 0         |
 | P2 Tasks | 4/5       | 1         |
 | PR #2    | 11/11     | 0         |
+| PR #3    | 8/8       | 0         |
 
 ---
 

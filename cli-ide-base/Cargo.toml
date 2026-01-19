@@ -7,3 +7,10 @@ license = "MIT"
 [dependencies]
 crossbeam = "0.8"
 serde = { version = "1.0", features = ["derive"], optional = true }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "event_bench"
+harness = false

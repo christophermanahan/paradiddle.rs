@@ -6,3 +6,10 @@ license = "MIT"
 
 [dependencies]
 ratatui = { version = "0.28", default-features = false, features = ["crossterm"] }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "render_bench"
+harness = false

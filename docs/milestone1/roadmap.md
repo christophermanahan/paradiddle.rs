@@ -42,7 +42,7 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 10. ~~**Coverage workflow**~~ ✅ – cargo-llvm-cov integration.
 11. ~~**Performance workflow**~~ ✅ – Benchmark infrastructure.
 
-## PR #3: UI Snapshot Tests & Performance Baselines (In Progress)
+## PR #3: UI Snapshot Tests & Performance Baselines (Completed ✅)
 
 1. ~~**UI snapshot test harness**~~ ✅ – Render windows to offscreen buffer using TestBackend.
 2. ~~**EditorWindow snapshot tests**~~ ✅ – Verify title, borders, and content.
@@ -53,12 +53,35 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 7. ~~**Render benchmarks**~~ ✅ – Criterion benches for window rendering at various sizes.
 8. ~~**Documentation**~~ ✅ – DEV.md updated with test and bench instructions.
 
+## PR #4: App Core + Event Loop + Deterministic Tests (In Progress)
+
+See `docs/milestone1/pr4-plan.md` for full planning document.
+
+1. ~~**App struct**~~ ✅ – Owns windows, state (running, size, focused pane).
+2. ~~**AppEvent/AppKey enums**~~ ✅ – Decoupled from crossterm for testability.
+3. ~~**App::handle_event()**~~ ✅ – Process quit, resize, focus toggle.
+4. ~~**App::render()**~~ ✅ – Render both windows with layout.
+5. ~~**Demo event loop**~~ ✅ – Real poll-based loop with keyboard/resize handling.
+6. ~~**Terminal guard**~~ ✅ – RAII cleanup pattern for terminal restoration.
+7. ~~**Non-TTY App tests**~~ ✅ – Integration tests driving AppEvent.
+8. ~~**App benchmarks**~~ ✅ – handle_event and render perf baselines.
+9. ~~**Documentation**~~ ✅ – DEV.md, roadmap, journal updated.
+
 ## Future Work
+
+### PR #5: Keybinding Router (Planned)
+- Configurable key→action mapping
+- Modal support (normal/insert/command)
+- Help overlay
+
+### PR #6: Layout Primitives (Planned)
+- Split containers (horizontal/vertical)
+- Resize splits with keyboard
+- Layout serialization
 
 ### Deferred Items (From Reviews)
 
 - **True debounce semantics** – Current implementation is leading-edge throttle; trailing-edge debounce requires async timers.
-- **Demo event loop** – Demo exits immediately; needs input handling to stay visible.
 
 ---
 
@@ -71,6 +94,7 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 | P2 Tasks | 4/5       | 1         |
 | PR #2    | 11/11     | 0         |
 | PR #3    | 8/8       | 0         |
+| PR #4    | 9/9       | 0         |
 
 ---
 

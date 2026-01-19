@@ -127,6 +127,24 @@ cargo test -p cli-ide-base
 cargo test event::tests
 ```
 
+## Running the Demo
+
+The demo runs an interactive TUI application. It requires a real terminal (TTY).
+
+```bash
+# Run the demo
+cargo run -p cli-ide-demo
+
+# Or with just
+just demo
+```
+
+**Controls:**
+- `q` or `Esc` - Quit the application
+- `Tab` - Toggle focus between Editor and Terminal panes
+
+The demo uses a proper event loop that handles resize events and keyboard input.
+
 ## Terminal Reset
 
 If the demo crashes and leaves your terminal in a bad state:
@@ -141,6 +159,9 @@ stty sane
 # Or (if really stuck)
 tput reset
 ```
+
+The demo includes a terminal guard (RAII pattern) that should automatically restore
+the terminal on exit, even on panic. If something goes wrong, use the commands above.
 
 ## Project Structure
 
@@ -173,6 +194,25 @@ paradiddle.rs/
 - Integration tests go in `tests/` directory
 - Tests should be deterministic (no flakes)
 - Use short timeouts for async/timing tests
+
+### App Core Tests
+
+The App core can be tested without a real terminal by driving it with `AppEvent`s.
+Tests verify state transitions (quit, resize, focus toggle) and rendering output.
+
+```bash
+# Run App integration tests
+cargo test -p cli-ide-workbench --test app_tests
+
+# Run with verbose output
+cargo test -p cli-ide-workbench --test app_tests -- --nocapture
+```
+
+App tests verify:
+- `AppEvent::Key(Q)` and `Esc` set `running = false`
+- `AppEvent::Resize(w, h)` updates stored dimensions
+- `AppEvent::Key(Tab)` toggles focus between panes
+- Rendering produces expected window titles and content
 
 ### UI Snapshot Tests
 
@@ -223,6 +263,9 @@ cargo bench -p cli-ide-base -- event_emit
 | cli-ide-workbench | `render_terminal` | TerminalWindow at various sizes |
 | cli-ide-workbench | `render_split_layout` | Split layout with both windows |
 | cli-ide-workbench | `terminal_creation` | TestBackend terminal creation |
+| cli-ide-workbench | `app_new` | App creation |
+| cli-ide-workbench | `app_handle_event_*` | Event handling (quit, resize, tab) |
+| cli-ide-workbench | `app_render` | Full app render at various sizes |
 
 Benchmark results are stored in `target/criterion/` and include HTML reports.
 

@@ -108,3 +108,40 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
   - `cargo fmt --all -- --check` - Formatted
   - `cargo bench --no-run` - Benchmarks compile
 - **Next Steps:** Create PR, respond to any Codex review feedback.
+
+## Entry 6
+
+- **Date:** 2026-01-19
+- **Task:** PR #4 - App core, event loop, and deterministic testing harness
+- **Notes:** Implemented a testable application core with a real event loop:
+  1. **App struct** (`cli-ide-workbench/src/app.rs`) - Owns EditorWindow, TerminalWindow, state (running, focused pane, size). Provides `new()`, `handle_event()`, `render()` methods.
+  2. **Input abstraction** (`cli-ide-workbench/src/input.rs`) - `AppEvent` enum (Key, Resize, Tick) and `AppKey` enum decoupled from crossterm for testability.
+  3. **Event handling** - Quit on `q`/`Esc`, focus toggle on `Tab`, resize updates dimensions.
+  4. **Demo event loop** (`cli-ide-demo/src/main.rs`) - Real poll-based loop using crossterm. Translates crossterm events to AppKey/AppEvent.
+  5. **Terminal guard** - RAII pattern (`TerminalGuard`) ensures terminal restoration even on panic.
+  6. **Integration tests** (`cli-ide-workbench/tests/app_tests.rs`) - 15 tests covering:
+     - State transitions (quit, resize, focus toggle)
+     - Render output verification (both windows, content, sizes)
+     - Layout calculations (50/50 split, non-overlapping)
+     - Event sequences
+  7. **App benchmarks** - Extended `render_bench.rs` with:
+     - `app_new`, `app_handle_event_quit/resize/tab`, `app_render` at various sizes
+  8. **Documentation** - Updated DEV.md with demo instructions, app test commands, benchmark table.
+- **Design Decisions:**
+  - Decoupled `AppKey`/`AppEvent` from crossterm to enable non-TTY testing.
+  - Terminal guard uses Drop impl for cleanup - handles errors, panics, early returns.
+  - Resize event sent on every render to sync dimensions (simple approach for Phase 1).
+  - Focus indicator deferred - would require Window trait changes, keeping scope minimal.
+- **Explicitly Out of Scope:**
+  - PTY integration (future milestone)
+  - IPC/daemon mode
+  - LSP client
+  - Tiling/layout tree (PR #6)
+  - Complex keybindings (PR #5)
+  - Mouse events
+- **Verification:**
+  - `cargo test --all --all-features` - All tests pass (40+ tests)
+  - `cargo clippy --all-targets --all-features -- -D warnings` - No warnings
+  - `cargo fmt --all -- --check` - Formatted
+  - `cargo bench --no-run` - Benchmarks compile
+- **Next Steps:** Create PR #4, respond to review feedback. Plan PR #5 for keybinding router.

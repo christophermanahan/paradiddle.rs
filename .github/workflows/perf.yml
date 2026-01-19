@@ -1,0 +1,38 @@
+name: Performance
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Sunday at 1am UTC
+    - cron: '0 1 * * 0'
+
+jobs:
+  bench:
+    name: Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check for benchmarks
+        id: check-benches
+        run: |
+          if find . -name "*.rs" -path "*/benches/*" | grep -q .; then
+            echo "has_benches=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_benches=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run benchmarks
+        if: steps.check-benches.outputs.has_benches == 'true'
+        run: cargo bench --all
+
+      - name: Skip benchmarks
+        if: steps.check-benches.outputs.has_benches == 'false'
+        run: echo "No benchmarks found. Skipping."

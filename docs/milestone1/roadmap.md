@@ -22,11 +22,39 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 
 ## P2 Tasks
 
-1. ~~**Write unit tests**~~ ✅ – Cover the event system and service container with unit tests. (11 tests added)
+1. ~~**Write unit tests**~~ ✅ – Cover the event system and service container with unit tests. (17 tests total)
 2. **Add logging/instrumentation** – Introduce logging statements to aid debugging.
 3. ~~**Improve README and documentation**~~ ✅ – Flesh out usage instructions and architecture diagrams.
 4. **Explore reference implementations** – Use `_refs` to store code and ideas from other projects (e.g., VS Code, Shaku, Ratatui examples).
-5. **Set up CI/CD pipeline** – Add GitHub Actions for automated testing, linting, and builds. (See `docs/milestone1/pr2-ci-plan.md`)
+5. ~~**Set up CI/CD pipeline**~~ ✅ – Add GitHub Actions for automated testing, linting, and builds. (PR #2)
+
+## PR #2: Governance & CI/CD (Completed ✅)
+
+1. ~~**Governance documentation**~~ ✅ – Human-in-the-loop policy, merge gates, ADR requirements.
+2. ~~**Review process documentation**~~ ✅ – Roles, checklists, resolution tables.
+3. ~~**Decision policy**~~ ✅ – ADR triggers and process.
+4. ~~**Review response playbook**~~ ✅ – How to respond to PR feedback.
+5. ~~**ADR system**~~ ✅ – Template and directory structure.
+6. ~~**GitHub templates**~~ ✅ – PR template, issue templates (bug, feature, design).
+7. ~~**Developer experience**~~ ✅ – DEV.md guide, CHANGELOG, justfile.
+8. ~~**CI workflows**~~ ✅ – fmt, clippy, test, build jobs.
+9. ~~**Security workflows**~~ ✅ – gitleaks, cargo-audit, cargo-deny.
+10. ~~**Coverage workflow**~~ ✅ – cargo-llvm-cov integration.
+11. ~~**Performance workflow**~~ ✅ – Benchmark infrastructure.
+
+## Future Work
+
+### PR #3: UI/E2E Testing (Planned)
+
+See `docs/milestone1/pr3-ui-e2e-plan.md` for details:
+- Snapshot-based TUI testing with `insta`
+- Performance benchmarks with `criterion`
+- PTY-based integration test scaffolding
+
+### Deferred Items (From Reviews)
+
+- **True debounce semantics** – Current implementation is leading-edge throttle; trailing-edge debounce requires async timers.
+- **Demo event loop** – Demo exits immediately; needs input handling to stay visible.
 
 ---
 
@@ -36,7 +64,8 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 |----------|-----------|-----------|
 | P0 Tasks | 4/4       | 0         |
 | P1 Tasks | 4/4       | 0         |
-| P2 Tasks | 2/5       | 3         |
+| P2 Tasks | 4/5       | 1         |
+| PR #2    | 11/11     | 0         |
 
 ---
 

@@ -67,7 +67,7 @@ See `docs/milestone1/pr4-plan.md` for full planning document.
 8. ~~**App benchmarks**~~ ✅ – handle_event and render perf baselines.
 9. ~~**Documentation**~~ ✅ – DEV.md, roadmap, journal updated.
 
-## PR #5: Focus Management + Keybinding Router (In Progress)
+## PR #5: Focus Management + Keybinding Router (Completed ✅)
 
 See `docs/milestone1/pr5-plan.md` for full planning document.
 
@@ -81,17 +81,41 @@ See `docs/milestone1/pr5-plan.md` for full planning document.
 8. ~~**Documentation**~~ ✅ – DEV.md, roadmap, journal updated.
 9. ~~**Keybinding contract + enforcement**~~ ✅ – Canonical binding docs, review rubric, CI workflow.
 
+## PR #5.1: Context Capture Model Documentation (In Progress)
+
+Documentation-only PR clarifying the architecture before Phase 2.
+
+1. ~~**CONTEXT_CAPTURE_MODEL.md**~~ ✅ – Canonical context capture architecture.
+2. ~~**ARCHITECTURE.md**~~ ✅ – High-level architecture overview.
+3. ~~**rust-ide-plans.md**~~ ✅ – Phased implementation roadmap.
+4. ~~**Roadmap update**~~ ✅ – PR number shift documented.
+5. ~~**Journal entry**~~ ✅ – Clarification rationale recorded.
+
+**Note:** This PR shifts all future PR numbers by +1.
+
 ## Future Work
 
-### PR #6: Layout Primitives (Planned)
+### PR #7: Layout Primitives (Planned)
 - Split containers (horizontal/vertical)
 - Resize splits with keyboard
 - Layout serialization
 
-### PR #7: Configurable Keybindings (Planned)
+*Previously PR #6; shifted due to PR #5.1 insertion.*
+
+### PR #8: Configurable Keybindings (Planned)
 - Load bindings from config file
 - Modal support (normal/insert/command)
 - Help overlay
+
+*Previously PR #7; shifted due to PR #5.1 insertion.*
+
+### PR #9+: Phase 2 Implementation (Planned)
+
+See `docs/architecture/rust-ide-plans.md` for detailed Phase 2 plans:
+- PTY-backed terminals
+- Daemon + IPC architecture
+- Shell integration
+- Tool adapters
 
 ### Deferred Items (From Reviews)
 
@@ -110,6 +134,7 @@ See `docs/milestone1/pr5-plan.md` for full planning document.
 | PR #3    | 8/8       | 0         |
 | PR #4    | 9/9       | 0         |
 | PR #5    | 9/9       | 0         |
+| PR #5.1  | 5/5       | 0         |
 
 ---
 

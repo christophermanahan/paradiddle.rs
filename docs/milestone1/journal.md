@@ -222,3 +222,51 @@ This journal is maintained by the AI agent(s) working on Phase 1 of the Paradid
   - `docs/review/AI_REVIEW_SCHEMA.md`
   - `.github/workflows/enforce-keybinding-doc.yml`
 - **Next Steps:** Push amendment to PR #5, wait for CI and review.
+
+## Entry 9
+
+- **Date:** 2026-01-20
+- **Task:** PR #5.1 - Context capture model documentation
+- **Notes:** Created documentation-only PR to clarify CLI context capture architecture before Phase 2 implementation begins.
+
+### Why This PR Exists
+
+Phase 2 will introduce PTY-backed terminals, daemon architecture, and context ingestion. Before writing code, we needed to make the mental model explicit:
+
+- What events are captured and how
+- What capability levels different tools support
+- How shell integration works vs PTY parsing
+- How shared/remote sessions function
+- Security and trust boundaries
+
+Without this clarification, Phase 2 implementation would be ad-hoc and inconsistent.
+
+### What Ambiguity This Resolves
+
+1. **Event taxonomy**: Now clearly defined as three layers (primitive, probes, semantic)
+2. **Capability ladder**: Explicit levels 0-4 for tool integration depth
+3. **Shell vs PTY**: Clear decision that shell hooks are primary, PTY parsing is fallback
+4. **Single-writer model**: Daemon owns the event log; clients publish to it
+5. **Sharing semantics**: Single authority even in collaborative mode
+
+### PR Number Shift
+
+This PR (#5.1) is inserted between PR #5 and the next implementation PR. As a result:
+
+| Original | New |
+|----------|-----|
+| PR #6 (Layout Primitives) | PR #7 |
+| PR #7 (Configurable Keybindings) | PR #8 |
+| Future PRs | +1 |
+
+Historical PRs (#1–#5) unchanged.
+
+- **Files Created:**
+  - `docs/architecture/CONTEXT_CAPTURE_MODEL.md` - Core context capture architecture
+  - `docs/architecture/ARCHITECTURE.md` - High-level architecture overview
+  - `docs/architecture/rust-ide-plans.md` - Phased implementation roadmap
+- **Files Updated:**
+  - `docs/milestone1/roadmap.md` - PR #5.1 entry, PR number shifts
+  - `docs/milestone1/journal.md` - This entry
+- **No code changes** - Documentation only.
+- **Next Steps:** Open PR #5.1, await review.

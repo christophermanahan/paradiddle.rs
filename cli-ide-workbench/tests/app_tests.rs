@@ -255,3 +255,130 @@ fn app_multiple_resizes() {
         );
     }
 }
+
+// ============================================================
+// Focus Indicator Tests
+// ============================================================
+
+#[test]
+fn app_focused_editor_shows_indicator() {
+    let mut app = App::new();
+    // Editor should be focused by default
+    assert_eq!(app.focused(), FocusedPane::Editor);
+
+    let output = render_app_to_string(&mut app, 80, 24);
+
+    // Editor should show focus indicator
+    assert!(
+        output.contains("Editor [*]"),
+        "Focused Editor should show [*] indicator.\nOutput:\n{}",
+        output
+    );
+    // Terminal should NOT show focus indicator
+    assert!(
+        !output.contains("Terminal [*]"),
+        "Unfocused Terminal should NOT show [*] indicator.\nOutput:\n{}",
+        output
+    );
+}
+
+#[test]
+fn app_focused_terminal_shows_indicator() {
+    let mut app = App::new();
+    // Toggle focus to terminal
+    app.handle_event(AppEvent::Key(AppKey::Tab));
+    assert_eq!(app.focused(), FocusedPane::Terminal);
+
+    let output = render_app_to_string(&mut app, 80, 24);
+
+    // Terminal should show focus indicator
+    assert!(
+        output.contains("Terminal [*]"),
+        "Focused Terminal should show [*] indicator.\nOutput:\n{}",
+        output
+    );
+    // Editor should NOT show focus indicator
+    assert!(
+        !output.contains("Editor [*]"),
+        "Unfocused Editor should NOT show [*] indicator.\nOutput:\n{}",
+        output
+    );
+}
+
+#[test]
+fn app_focus_toggle_changes_indicators() {
+    let mut app = App::new();
+
+    // Initial state: Editor focused
+    let output1 = render_app_to_string(&mut app, 80, 24);
+    assert!(
+        output1.contains("Editor [*]"),
+        "Initially Editor should be focused"
+    );
+
+    // Toggle to Terminal
+    app.handle_event(AppEvent::Key(AppKey::Tab));
+    let output2 = render_app_to_string(&mut app, 80, 24);
+    assert!(
+        output2.contains("Terminal [*]"),
+        "After Tab, Terminal should be focused"
+    );
+
+    // Toggle back to Editor
+    app.handle_event(AppEvent::Key(AppKey::Tab));
+    let output3 = render_app_to_string(&mut app, 80, 24);
+    assert!(
+        output3.contains("Editor [*]"),
+        "After second Tab, Editor should be focused again"
+    );
+}
+
+// ============================================================
+// Window ID Tests
+// ============================================================
+
+#[test]
+fn app_window_ids_are_unique() {
+    let app = App::new();
+    assert_ne!(
+        app.editor_id(),
+        app.terminal_id(),
+        "Editor and Terminal should have different IDs"
+    );
+}
+
+#[test]
+fn app_focused_id_matches_focused_pane() {
+    let mut app = App::new();
+
+    // Initially editor is focused
+    assert_eq!(app.focused_id(), Some(app.editor_id()));
+
+    // Toggle to terminal
+    app.handle_event(AppEvent::Key(AppKey::Tab));
+    assert_eq!(app.focused_id(), Some(app.terminal_id()));
+
+    // Toggle back to editor
+    app.handle_event(AppEvent::Key(AppKey::Tab));
+    assert_eq!(app.focused_id(), Some(app.editor_id()));
+}
+
+// ============================================================
+// Keybinding Router Tests
+// ============================================================
+
+#[test]
+fn app_custom_keybinding_works() {
+    use cli_ide_workbench::keybinding::Action;
+
+    let mut app = App::new();
+
+    // Register a custom quit binding
+    app.keybinding_router_mut()
+        .register_global(AppKey::Char('x'), Action::Quit);
+
+    // Verify it works
+    assert!(app.is_running());
+    app.handle_event(AppEvent::Key(AppKey::Char('x')));
+    assert!(!app.is_running(), "Custom 'x' binding should quit the app");
+}

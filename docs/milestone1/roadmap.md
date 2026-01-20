@@ -53,7 +53,7 @@ This roadmap enumerates the tasks for Phase 1 of the Paradiddle.rs implementatio
 7. ~~**Render benchmarks**~~ ✅ – Criterion benches for window rendering at various sizes.
 8. ~~**Documentation**~~ ✅ – DEV.md updated with test and bench instructions.
 
-## PR #4: App Core + Event Loop + Deterministic Tests (In Progress)
+## PR #4: App Core + Event Loop + Deterministic Tests (Completed ✅)
 
 See `docs/milestone1/pr4-plan.md` for full planning document.
 
@@ -67,17 +67,31 @@ See `docs/milestone1/pr4-plan.md` for full planning document.
 8. ~~**App benchmarks**~~ ✅ – handle_event and render perf baselines.
 9. ~~**Documentation**~~ ✅ – DEV.md, roadmap, journal updated.
 
-## Future Work
+## PR #5: Focus Management + Keybinding Router (In Progress)
 
-### PR #5: Keybinding Router (Planned)
-- Configurable key→action mapping
-- Modal support (normal/insert/command)
-- Help overlay
+See `docs/milestone1/pr5-plan.md` for full planning document.
+
+1. ~~**WindowId type**~~ ✅ – Unique identifier with atomic counter.
+2. ~~**FocusManager**~~ ✅ – Track focus, emit change events via Event<T>.
+3. ~~**KeybindingRouter**~~ ✅ – Global key→action dispatch, default bindings.
+4. ~~**Window trait update**~~ ✅ – Added `render_with_focus()` method.
+5. ~~**Focus indicators**~~ ✅ – Thick borders and `[*]` title marker.
+6. ~~**App integration**~~ ✅ – Uses FocusManager, KeybindingRouter, WindowIds.
+7. ~~**Integration tests**~~ ✅ – Focus indicator and keybinding tests.
+8. ~~**Documentation**~~ ✅ – DEV.md, roadmap, journal updated.
+9. ~~**Keybinding contract + enforcement**~~ ✅ – Canonical binding docs, review rubric, CI workflow.
+
+## Future Work
 
 ### PR #6: Layout Primitives (Planned)
 - Split containers (horizontal/vertical)
 - Resize splits with keyboard
 - Layout serialization
+
+### PR #7: Configurable Keybindings (Planned)
+- Load bindings from config file
+- Modal support (normal/insert/command)
+- Help overlay
 
 ### Deferred Items (From Reviews)
 
@@ -95,6 +109,7 @@ See `docs/milestone1/pr4-plan.md` for full planning document.
 | PR #2    | 11/11     | 0         |
 | PR #3    | 8/8       | 0         |
 | PR #4    | 9/9       | 0         |
+| PR #5    | 9/9       | 0         |
 
 ---
 

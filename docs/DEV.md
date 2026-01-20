@@ -213,6 +213,48 @@ App tests verify:
 - `AppEvent::Resize(w, h)` updates stored dimensions
 - `AppEvent::Key(Tab)` toggles focus between panes
 - Rendering produces expected window titles and content
+- Focus indicators appear on the focused window
+- WindowIds are unique and track focus correctly
+- Custom keybindings can be registered and dispatched
+
+### Focus Management
+
+The app uses `FocusManager` to track which window has focus. Each window has a
+unique `WindowId` assigned at creation. Focus state is reflected visually:
+
+- Focused windows show `[*]` in their title
+- Focused windows use thick borders (`BorderType::Thick`)
+- Unfocused windows use plain borders
+
+```bash
+# Run focus-related tests
+cargo test -p cli-ide-workbench focus
+```
+
+### Keybinding System
+
+The `KeybindingRouter` dispatches key events to actions. Default bindings:
+
+| Key | Action |
+|-----|--------|
+| `q` | Quit |
+| `Esc` | Quit |
+| `Tab` | Toggle Focus |
+
+Custom bindings can be registered:
+
+```rust
+use cli_ide_workbench::keybinding::{Action, KeybindingRouter};
+use cli_ide_workbench::input::AppKey;
+
+let mut router = KeybindingRouter::new();
+router.register_global(AppKey::Char('h'), Action::FocusPrev);
+```
+
+```bash
+# Run keybinding tests
+cargo test -p cli-ide-workbench keybinding
+```
 
 ### UI Snapshot Tests
 
